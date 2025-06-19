@@ -332,7 +332,7 @@ export default function WhatsEspiaoPage() {
 
             <div className="flex items-center gap-2 p-3 rounded-lg bg-yellow-900/50 text-yellow-300 text-sm mb-6 animate-text-neon-pulse">
               <AlertTriangle className="w-4 h-4 animate-icon-neon-pulse" /> {/* Ícone com animação neon */}
-              Apenas <span className="font-bold">{remainingVerifications}</span> verificações gratuitas restantes hoje.
+              Apenas <span className="font-bold">{remainingVerifications}</span> verificações gratuitas hoje.
             </div>
 
             <Button
