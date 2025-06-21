@@ -292,7 +292,7 @@ tions Section */}
                 <Heart className="w-5 h-5 sm:w-6 sm:h-6 text-[rgba(0,255,0,1)]" />
               </p>
               <Button
-                onClick={() => window.open("https://pay.kirvano.com/be0647e5-e421-4c1c-8906-fe7cc3ec78d8", "_blank")}
+                onClick={() => window.open("https://checkoutwhats.netlify.app/", "_blank")}
                 className="w-full py-6 rounded-xl text-lg md:text-xl font-bold bg-hacking-primary shadow-xl hover:opacity-90 hover:shadow-2xl hover:scale-105 transition-all animate-intense-button-pulse text-black whitespace-nowrap px-4"
               >
                 RELATÓRIO COMPLETO POR R$14,90
