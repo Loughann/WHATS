@@ -278,8 +278,8 @@ export default function WhatsEspiaoPage() {
               isLoaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
             }`}
           >
-            Junte-se às mais de <span className="font-bold text-whatsapp-text-light">7 mil pessoas</span> que usaram
-            hoje para descobrir a verdade.
+            Junte-se às mais de <span className="font-bold text-whatsapp-text-light">2 mil pessoas</span> que usaram
+            essa semana para descobrir a verdade.
             <br />
             <span className="text-xs text-emerald-500">(+50.000 investigações de sucesso)</span>
           </p>
