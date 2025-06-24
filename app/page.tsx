@@ -1,33 +1,25 @@
 "use client" // Adicionado para permitir o uso de hooks de estado
 
 import type React from "react"
+import Script from "next/script" // Importe o componente Script aqui
+import Image from "next/image"
 
-import {
-  Heart,
-  Eye,
-  ShieldCheck,
-  CheckCircle,
-  Lock,
-  Star,
-  Search,
-  Phone,
-  AlertTriangle,
-  Flame,
-  MessageCircle,
-} from "lucide-react"
+import { Heart, ShieldCheck, CheckCircle, Lock, Star, AlertTriangle, Flame, MessageCircle } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import MatrixBackground from "@/components/matrix-background"
-import { useState, useEffect, useRef } from "react" // Importar useState, useEffect, useRef
-import { useRouter } from "next/navigation" // Importar useRouter
+import WhatsAppBackground from "@/components/whatsapp-background"
+import { useState, useEffect, useRef, useCallback } from "react"
+import { useRouter } from "next/navigation"
 
 export default function WhatsEspiaoPage() {
-  const [selectedGender, setSelectedGender] = useState<string | null>(null) // Estado para o gênero selecionado
-  const [phoneNumber, setPhoneNumber] = useState<string>("") // Estado para o número de telefone
-  const [remainingVerifications, setRemainingVerifications] = useState<number>(30) // Estado para o número de verificações
-  const timeoutRef = useRef<NodeJS.Timeout | null>(null) // Ref para o timeout do contador
-  const [showPhoneWarning, setShowPhoneWarning] = useState(false) // Novo estado para controlar a visibilidade do aviso
-  const router = useRouter() // Inicializar useRouter
+  const [selectedGender, setSelectedGender] = useState<string | null>(null)
+  const [phoneNumber, setPhoneNumber] = useState<string>("")
+  const [remainingVerifications, setRemainingVerifications] = useState<number>(30)
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null)
+  const [showPhoneWarning, setShowPhoneWarning] = useState(false)
+  const [currentDate, setCurrentDate] = useState<string>("")
+  const [isLoaded, setIsLoaded] = useState(false)
+  const router = useRouter()
 
   const userMessages = [
     { username: "Bia_oliveira", gender: "female" },
@@ -38,6 +30,25 @@ export default function WhatsEspiaoPage() {
   ]
   const [currentUserMessageIndex, setCurrentUserMessageIndex] = useState(0)
   const userMessageTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+
+  // Efeito para marcar como carregado e iniciar animações
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoaded(true)
+    }, 100)
+    return () => clearTimeout(timer)
+  }, [])
+
+  // Efeito para definir a data atual
+  useEffect(() => {
+    const today = new Date()
+    const formattedDate = today.toLocaleDateString("pt-BR", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+    })
+    setCurrentDate(formattedDate)
+  }, [])
 
   // Efeito para diminuir o número de verificações em tempo aleatório
   useEffect(() => {
@@ -66,7 +77,7 @@ export default function WhatsEspiaoPage() {
         clearTimeout(timeoutRef.current)
       }
     }
-  }, []) // Executa apenas uma vez ao montar
+  }, [])
 
   // Efeito para alternar as mensagens de usuários
   useEffect(() => {
@@ -86,7 +97,7 @@ export default function WhatsEspiaoPage() {
         clearTimeout(userMessageTimeoutRef.current)
       }
     }
-  }, [userMessages.length]) // Depende do tamanho da lista de mensagens
+  }, [userMessages.length])
 
   const formatPhoneNumber = (value: string) => {
     if (!value) return ""
@@ -105,24 +116,23 @@ export default function WhatsEspiaoPage() {
     return `(${value.slice(0, 2)}) ${value.slice(2, 7)}-${value.slice(7)}`
   }
 
-  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!selectedGender) {
-      setShowPhoneWarning(true) // Mostra o aviso se não houver gênero selecionado
-      e.preventDefault() // Impede a digitação
-      return
-    }
-    setShowPhoneWarning(false) // Esconde o aviso se um gênero estiver selecionado
-    const formattedValue = formatPhoneNumber(e.target.value)
-    setPhoneNumber(formattedValue)
-  }
+  const handlePhoneChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      if (!selectedGender) {
+        setShowPhoneWarning(true) // Mostra o aviso se não houver gênero selecionado
+        e.preventDefault() // Impede a digitação
+        return
+      }
+      setShowPhoneWarning(false) // Esconde o aviso se um gênero estiver selecionado
+      const formattedValue = formatPhoneNumber(e.target.value)
+      setPhoneNumber(formattedValue)
+    },
+    [selectedGender],
+  )
 
-  const handlePhoneInputFocus = () => {
-    if (!selectedGender) {
-      setShowPhoneWarning(true)
-    } else {
-      setShowPhoneWarning(false)
-    }
-  }
+  const handlePhoneInputFocus = useCallback(() => {
+    // Removido a lógica que causava re-renderizações desnecessárias
+  }, [])
 
   const handleGenderSelection = (gender: string) => {
     setSelectedGender(gender)
@@ -154,78 +164,170 @@ export default function WhatsEspiaoPage() {
 
   return (
     <div className="min-h-screen flex flex-col items-center py-8 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
-      {" "}
-      {/* Adicionado relative e overflow-hidden para o canvas */}
-      <MatrixBackground /> {/* Adicionado o componente MatrixBackground */}
+      {/* UTMify Scripts */}
+      <Script
+        src="https://cdn.utmify.com.br/scripts/utms/latest.js"
+        data-utmify-prevent-xcod-sck
+        data-utmify-prevent-subids
+        async
+        defer
+        strategy="afterInteractive"
+      />
+
+      <Script
+        id="utmify-pixel"
+        strategy="afterInteractive"
+        dangerouslySetInnerHTML={{
+          __html: `
+            window.pixelId = "6859c44c8c3a8e69c4f45491";
+            var a = document.createElement("script");
+            a.setAttribute("async", "");
+            a.setAttribute("defer", "");
+            a.setAttribute("src", "https://cdn.utmify.com.br/scripts/pixel/pixel.js");
+            document.head.appendChild(a);
+          `,
+        }}
+      />
+
+      {/* Novo fundo animado do WhatsApp */}
+      <WhatsAppBackground />
+
       <div className="relative z-10 flex flex-col items-center w-full">
-        {" "}
-        {/* Conteúdo principal em uma nova div para ficar acima do canvas */}
         {/* Header Section */}
-        <header className="flex flex-col items-center text-center mb-12">
-          <div className="flex items-center justify-center gap-4 mb-6">
-            <div className="p-4 rounded-full bg-gradient-to-br from-whatsapp-accent-main to-whatsapp-accent-dark shadow-lg">
-              <Heart className="w-10 h-10 text-whatsapp-text-light" />
+        <header
+          className={`flex flex-col items-center text-center mb-12 transition-all duration-1000 ease-out ${
+            isLoaded ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-8"
+          }`}
+        >
+          <div
+            className={`flex items-center justify-center gap-4 mb-6 transition-all duration-1200 ease-out delay-200 ${
+              isLoaded ? "opacity-100 scale-100" : "opacity-0 scale-95"
+            }`}
+          >
+            <div className="w-16 h-16 flex items-center justify-center">
+              <Image
+                src="/images/whatsapp-logo.webp"
+                alt="WhatsApp Logo"
+                width={64}
+                height={64}
+                className="w-full h-full object-contain"
+              />
             </div>
-            <h1 className="text-5xl font-extrabold tracking-tight text-whatsapp-accent-main animate-title-glow">
-              WHATS ESPIÃO
+            <h1 className="text-5xl font-extrabold tracking-tight text-whatsapp-accent-main animate-title-glow flex flex-col items-center">
+              <span className="text-6xl">WHATS</span>
+              <span className="text-4xl">ESPIÃO</span>
             </h1>
-            <div className="p-4 rounded-full bg-gradient-to-br from-whatsapp-accent-main to-whatsapp-accent-dark shadow-lg">
-              <Eye className="w-10 h-10 text-whatsapp-text-light" />
+            <div className="w-16 h-16 flex items-center justify-center">
+              <Image
+                src="/images/whatsapp-logo.webp"
+                alt="WhatsApp Logo"
+                width={64}
+                height={64}
+                className="w-full h-full object-contain"
+              />
             </div>
           </div>
 
-          <h2 className="text-3xl md:text-4xl font-bold mb-4 max-w-2xl text-whatsapp-text-light">
+          <h2
+            className={`text-3xl md:text-4xl font-bold mb-4 max-w-2xl text-whatsapp-text-light transition-all duration-1000 ease-out delay-400 ${
+              isLoaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
+            }`}
+          >
             A desconfiança te paralisa? Descubra o histórico de conversas no WhatsApp.
           </h2>
-          <p className="text-lg text-whatsapp-text-light mb-8 max-w-3xl">
+          <p
+            className={`text-lg text-whatsapp-text-light mb-8 max-w-3xl transition-all duration-1000 ease-out delay-500 ${
+              isLoaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
+            }`}
+          >
             Milhões de pessoas usam o WhatsApp para esconder segredos. Nossa tecnologia expõe conversas e te dá a prova
             que você precisa. Chega de noites em claro e incerteza.
           </p>
 
-          <div className="flex flex-wrap justify-center gap-4 mb-8">
-            <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-whatsapp-accent-main to-whatsapp-accent-dark text-sm font-medium shadow-md text-black">
+          <div
+            className={`flex flex-wrap justify-center gap-4 mb-8 transition-all duration-1000 ease-out delay-600 ${
+              isLoaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
+            }`}
+          >
+            <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-whatsapp-accent-main to-whatsapp-accent-dark text-sm font-medium shadow-md text-white">
               <ShieldCheck className="w-4 h-4" />
               100% Seguro
             </div>
-            <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-whatsapp-accent-main to-whatsapp-accent-dark text-sm font-medium shadow-md text-black">
+            <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-whatsapp-accent-main to-whatsapp-accent-dark text-sm font-medium shadow-md text-white">
               <CheckCircle className="w-5 h-5" />
               Resultados Precisos
             </div>
-            <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-whatsapp-accent-main to-whatsapp-accent-dark text-sm font-medium shadow-md text-black">
+            <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-whatsapp-accent-main to-whatsapp-accent-dark text-sm font-medium shadow-md text-white">
               <Lock className="w-4 h-4" />
               Totalmente Anônimo
             </div>
           </div>
 
-          <div className="flex items-center gap-2 text-lg font-semibold mb-4 text-white">
+          <div
+            className={`flex items-center gap-2 text-lg font-semibold mb-4 text-white transition-all duration-1000 ease-out delay-700 ${
+              isLoaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
+            }`}
+          >
             {[...Array(5)].map((_, i) => (
               <Star key={i} className="w-5 h-5 fill-current text-[rgba(255,214,0,1)]" />
             ))}
             4.9/5.0
           </div>
-          <p className="text-whatsapp-text-light text-sm max-w-xl">
+          <p
+            className={`text-whatsapp-text-light text-sm max-w-xl transition-all duration-1000 ease-out delay-800 ${
+              isLoaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
+            }`}
+          >
             Junte-se às mais de <span className="font-bold text-whatsapp-text-light">7 mil pessoas</span> que usaram
             hoje para descobrir a verdade.
             <br />
             <span className="text-xs text-emerald-500">(+50.000 investigações de sucesso)</span>
           </p>
         </header>
+
         {/* Call to Action Button */}
         <Button
-          onClick={scrollToInvestigation} // Adicionado o handler de clique
-          className="w-full max-w-xs py-6 rounded-xl text-xl font-bold bg-gradient-button shadow-xl hover:opacity-90 hover:shadow-2xl hover:scale-105 transition-all mb-16 bg-[rgba(21,255,0,1)] text-black animate-intense-button-pulse"
+          onClick={scrollToInvestigation}
+          className={`w-full max-w-xs py-6 rounded-xl text-xl font-bold shadow-xl hover:opacity-90 hover:shadow-2xl hover:scale-105 transition-all mb-4 text-black animate-led-pulse border-2 duration-1000 ease-out delay-900 ${
+            isLoaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
+          }`}
+          style={{
+            background: "linear-gradient(45deg, #25D366, #1DA851)",
+            borderColor: "#25D366",
+            boxShadow:
+              "0 0 3px #25D366, 0 0 6px #25D366, 0 0 9px #25D366, 0 0 12px #25D366, 0 0 18px #25D366, 0 0 22px #25D366",
+          }}
         >
-          <Heart className="w-6 h-6 mr-2" />
-          Descubra a Verdade
+          <Heart className="w-6 h-6 mr-2 text-white" />
+          <span className="text-white">Descubra a Verdade</span>
         </Button>
+
+        {/* Texto de Escassez */}
+        <p
+          className={`text-sm font-semibold mb-16 text-center animate-title-glow text-white transition-all duration-1000 ease-out delay-1000 ${
+            isLoaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
+          }`}
+        >
+          Investigação válida até {currentDate}
+        </p>
+
         {/* Feature Cards Section */}
-        <section className="grid md:grid-cols-3 gap-8 w-full max-w-5xl mb-16">
-          <div className="relative p-6 rounded-xl overflow-hidden shadow-lg bg-gradient-section-bg border border-transparent before:absolute before:inset-0 before:p-[2px] before:bg-gradient-border before:rounded-xl before:z-[-1]">
-            <div className="flex flex-col items-center text-center">
+        <section
+          className={`grid md:grid-cols-3 gap-8 w-full max-w-5xl mb-16 transition-all duration-1200 ease-out delay-1100 ${
+            isLoaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+          }`}
+        >
+          {/* Card 1: Descubra a Verdade */}
+          <div
+            className={`w-full p-4 rounded-lg border border-hacking-primary/50 text-center animate-led-glow-pulse transition-all duration-800 ease-out delay-1200 ${
+              isLoaded ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-8"
+            }`}
+          >
+            <div className="flex flex-col items-center">
               <div className="p-4 rounded-full bg-gradient-to-br from-whatsapp-accent-main to-whatsapp-accent-dark mb-4">
-                <Heart className="w-8 h-8 text-whatsapp-text-light" />
+                <Heart className="w-8 h-8 text-whatsapp-text-light animate-pulse" />
               </div>
-              <h3 className="text-2xl font-bold mb-2 text-transparent bg-clip-text bg-gradient-to-r from-whatsapp-accent-main to-whatsapp-accent-dark">
+              <h3 className="text-2xl font-bold mb-2 text-transparent bg-clip-text bg-gradient-to-r from-whatsapp-accent-main to-whatsapp-accent-dark animate-pulse">
                 Descubra a Verdade
               </h3>
               <p className="text-whatsapp-text-light">
@@ -235,12 +337,17 @@ export default function WhatsEspiaoPage() {
             </div>
           </div>
 
-          <div className="relative p-6 rounded-xl overflow-hidden shadow-lg bg-gradient-section-bg border border-transparent before:absolute before:inset-0 before:p-[2px] before:bg-gradient-border before:rounded-xl before:z-[-1]">
-            <div className="flex flex-col items-center text-center">
+          {/* Card 2: Provas Irrefutáveis */}
+          <div
+            className={`w-full p-4 rounded-lg border border-hacking-primary/50 text-center animate-led-glow-pulse transition-all duration-800 ease-out delay-1300 ${
+              isLoaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+            }`}
+          >
+            <div className="flex flex-col items-center">
               <div className="p-4 rounded-full bg-gradient-to-br from-whatsapp-accent-main to-whatsapp-accent-dark mb-4">
-                <MessageCircle className="w-8 h-8 text-whatsapp-text-light" />
+                <MessageCircle className="w-8 h-8 text-whatsapp-text-light animate-pulse" />
               </div>
-              <h3 className="text-2xl font-bold mb-2 text-transparent bg-clip-text bg-gradient-to-r from-whatsapp-accent-main to-whatsapp-accent-dark">
+              <h3 className="text-2xl font-bold mb-2 text-transparent bg-clip-text bg-gradient-to-r from-whatsapp-accent-main to-whatsapp-accent-dark animate-pulse">
                 Provas Irrefutáveis
               </h3>
               <p className="text-whatsapp-text-light">
@@ -250,12 +357,17 @@ export default function WhatsEspiaoPage() {
             </div>
           </div>
 
-          <div className="relative p-6 rounded-xl overflow-hidden shadow-lg bg-gradient-section-bg border border-transparent before:absolute before:inset-0 before:p-[2px] before:bg-gradient-border before:rounded-xl before:z-[-1]">
-            <div className="flex flex-col items-center text-center">
+          {/* Card 3: Proteja-se com Sigilo */}
+          <div
+            className={`w-full p-4 rounded-lg border border-hacking-primary/50 text-center animate-led-glow-pulse transition-all duration-800 ease-out delay-1400 ${
+              isLoaded ? "opacity-100 translate-x-0" : "opacity-0 translate-x-8"
+            }`}
+          >
+            <div className="flex flex-col items-center">
               <div className="p-4 rounded-full bg-gradient-to-br from-whatsapp-accent-main to-whatsapp-accent-dark mb-4">
-                <ShieldCheck className="w-8 h-8 text-whatsapp-text-light" />
+                <ShieldCheck className="w-8 h-8 text-whatsapp-text-light animate-pulse" />
               </div>
-              <h3 className="text-2xl font-bold mb-2 text-transparent bg-clip-text bg-gradient-to-r from-whatsapp-accent-main to-whatsapp-accent-dark">
+              <h3 className="text-2xl font-bold mb-2 text-transparent bg-clip-text bg-gradient-to-r from-whatsapp-accent-main to-whatsapp-accent-dark animate-pulse">
                 Proteja-se com Sigilo
               </h3>
               <p className="text-whatsapp-text-light">
@@ -265,92 +377,190 @@ export default function WhatsEspiaoPage() {
             </div>
           </div>
         </section>
+
         {/* Investigation Form Section */}
         <section
-          id="investigation-form" // Adicionado o ID para rolagem
-          className="w-full max-w-md p-8 rounded-xl bg-gradient-section-bg relative overflow-hidden border border-transparent animate-glow-pulse"
+          id="investigation-form"
+          className={`w-full max-w-md p-8 rounded-xl bg-gradient-section-bg relative overflow-hidden border border-transparent animate-glow-pulse transition-all duration-1200 ease-out delay-1500 ${
+            isLoaded ? "opacity-100 scale-100" : "opacity-0 scale-95"
+          }`}
         >
           <div className="absolute inset-[-3px] rounded-xl bg-gradient-neon-border animate-pulse-border z-[-1]"></div>
           <div className="relative z-10">
-            <p className="text-center text-whatsapp-text-light mb-6 text-xl italic">
+            <p
+              className={`text-center text-whatsapp-text-light mb-6 text-xl italic transition-all duration-800 ease-out delay-1600 ${
+                isLoaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
+              }`}
+            >
               Você vai continuar na dúvida enquanto outros descobrem a verdade?
             </p>
-            <div className="flex items-center justify-center gap-2 mb-6">
-              <Search className="w-6 h-6 text-[rgba(21,255,0,1)]" />
+            <div
+              className={`flex items-center justify-center gap-2 mb-6 transition-all duration-800 ease-out delay-1700 ${
+                isLoaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
+              }`}
+            >
               <h3 className="font-bold bg-clip-text bg-gradient-to-r from-whatsapp-accent-main to-whatsapp-accent-dark text-center text-4xl animate-pulse text-[rgba(21,255,0,1)]">
                 ACABE COM A ANGÚSTIA
               </h3>
             </div>
-            <p className="text-center text-whatsapp-text-light mb-8">
+            <p
+              className={`text-center text-whatsapp-text-light mb-8 transition-all duration-800 ease-out delay-1800 ${
+                isLoaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
+              }`}
+            >
               Um simples número de telefone é tudo o que precisamos para revelar se a sua confiança está sendo traída.
             </p>
 
-            <p className="text-center font-semibold mb-4 text-whatsapp-text-light text-2xl">
+            <p
+              className={`text-center font-semibold mb-4 text-whatsapp-text-light text-2xl transition-all duration-800 ease-out delay-1900 ${
+                isLoaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
+              }`}
+            >
               Quem você quer investigar?
             </p>
-            <div className="flex justify-center gap-4 mb-8">
-              <Button
-                onClick={() => handleGenderSelection("male")}
-                className={`flex-1 py-3 rounded-lg hover:shadow-lg hover:scale-105 transition-all text-lg font-semibold animate-subtle-button-pulse
-                  ${
-                    selectedGender === "male"
-                      ? "bg-whatsapp-blue-selected shadow-blue-glow text-whatsapp-text-light" // Azul e brilho azul
-                      : "bg-muted-blue text-whatsapp-text-light" // Azul apagado e texto claro
-                  }`}
-              >
-                <Phone className="w-5 h-5 mr-2" />
-                Homem
-              </Button>
-              <Button
-                onClick={() => handleGenderSelection("female")}
-                className={`flex-1 py-3 rounded-lg hover:shadow-lg hover:scale-105 transition-all text-lg font-semibold animate-subtle-button-pulse
-                  ${
-                    selectedGender === "female"
-                      ? "bg-whatsapp-pink-selected shadow-pink-glow text-whatsapp-text-light" // Rosa e brilho rosa
-                      : "bg-muted-pink text-whatsapp-text-light" // Rosa apagado e texto claro
-                  }`}
-              >
-                <Phone className="w-5 h-5 mr-2" />
-                Mulher
-              </Button>
+            <div
+              className={`flex justify-center gap-6 mb-8 transition-all duration-800 ease-out delay-2000 ${
+                isLoaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
+              }`}
+            >
+              <label className="flex items-center gap-3 cursor-pointer group">
+                <div className="relative">
+                  <input
+                    type="radio"
+                    name="gender"
+                    value="male"
+                    checked={selectedGender === "male"}
+                    onChange={() => handleGenderSelection("male")}
+                    className="sr-only"
+                  />
+                  <div
+                    className={`w-6 h-6 rounded-full border-2 transition-all duration-300 ${
+                      selectedGender === "male"
+                        ? "border-whatsapp-blue-selected bg-whatsapp-blue-selected shadow-blue-glow"
+                        : "border-gray-400 bg-transparent"
+                    }`}
+                  >
+                    {selectedGender === "male" && (
+                      <div className="w-2 h-2 bg-white rounded-full absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2" />
+                    )}
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Image
+                    src="/images/whatsapp-white-logo.webp"
+                    alt="WhatsApp"
+                    width={20}
+                    height={20}
+                    className="w-5 h-5"
+                  />
+                  <span className="text-lg font-semibold text-whatsapp-text-light group-hover:text-whatsapp-accent-main transition-colors">
+                    Homem
+                  </span>
+                </div>
+              </label>
+
+              <label className="flex items-center gap-3 cursor-pointer group">
+                <div className="relative">
+                  <input
+                    type="radio"
+                    name="gender"
+                    value="female"
+                    checked={selectedGender === "female"}
+                    onChange={() => handleGenderSelection("female")}
+                    className="sr-only"
+                  />
+                  <div
+                    className={`w-6 h-6 rounded-full border-2 transition-all duration-300 ${
+                      selectedGender === "female"
+                        ? "border-whatsapp-pink-selected bg-whatsapp-pink-selected shadow-pink-glow"
+                        : "border-gray-400 bg-transparent"
+                    }`}
+                  >
+                    {selectedGender === "female" && (
+                      <div className="w-2 h-2 bg-white rounded-full absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2" />
+                    )}
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Image
+                    src="/images/whatsapp-white-logo.webp"
+                    alt="WhatsApp"
+                    width={20}
+                    height={20}
+                    className="w-5 h-5"
+                  />
+                  <span className="text-lg font-semibold text-whatsapp-text-light group-hover:text-whatsapp-accent-main transition-colors">
+                    Mulher
+                  </span>
+                </div>
+              </label>
             </div>
 
-            <p className="text-center text-lg font-semibold mb-2 text-whatsapp-text-light">Número de Whatsapp:</p>
+            <p
+              className={`text-center text-lg font-semibold mb-2 text-whatsapp-text-light transition-all duration-800 ease-out delay-2100 ${
+                isLoaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
+              }`}
+            >
+              Número de Whatsapp:
+            </p>
             <Input
               type="tel"
               placeholder="(11) 11111-1111"
-              className="w-full py-3 px-4 rounded-lg border border-whatsapp-border-light text-center text-lg mb-6 focus:border-whatsapp-accent-main focus:ring-whatsapp-accent-main bg-white text-black"
-              value={phoneNumber} // Controla o valor do input
-              onChange={handlePhoneChange} // Adiciona o handler de mudança
-              onFocus={handlePhoneInputFocus} // Adiciona o handler de foco
+              className={`w-full py-3 px-4 rounded-lg border border-whatsapp-border-light text-center text-lg mb-6 focus:border-whatsapp-accent-main focus:ring-whatsapp-accent-main bg-white text-black transition-all duration-800 ease-out delay-2200 ${
+                isLoaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
+              }`}
+              value={phoneNumber}
+              onChange={handlePhoneChange}
+              onFocus={handlePhoneInputFocus}
             />
             {showPhoneWarning && (
-              <p className="text-center text-red-400 text-sm mb-4">
+              <p className="text-center text-red-400 text-sm mb-4 transition-all duration-300 ease-in-out">
                 Por favor, selecione um gênero antes de digitar o número.
               </p>
             )}
 
-            <div className="flex items-center gap-2 p-3 rounded-lg bg-yellow-900/50 text-yellow-300 text-sm mb-6 animate-text-neon-pulse">
-              <AlertTriangle className="w-4 h-4 animate-icon-neon-pulse" /> {/* Ícone com animação neon */}
-              Apenas <span className="font-bold">{remainingVerifications}</span> verificações gratuitas hoje.
+            <div
+              className={`flex items-center gap-2 p-3 rounded-lg bg-yellow-900/50 text-yellow-300 text-sm mb-6 animate-text-neon-pulse transition-all duration-800 ease-out delay-2300 ${
+                isLoaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
+              }`}
+            >
+              <AlertTriangle className="w-4 h-4 animate-icon-neon-pulse" />
+              Apenas <span className="font-bold">{remainingVerifications}</span> verificações gratuitas restantes hoje.
             </div>
 
             <Button
-              onClick={handleExposeTruth} // Novo handler para redirecionar
-              disabled={!selectedGender || getCleanPhoneNumber(phoneNumber).length !== 11} // Adicionado a condição de desabilitação
-              className="w-full py-4 rounded-xl text-xl font-bold bg-gradient-button shadow-xl hover:opacity-90 hover:shadow-2xl hover:scale-105 transition-all mb-6 bg-[rgba(21,255,0,1)] text-black animate-intense-button-pulse"
+              onClick={handleExposeTruth}
+              disabled={!selectedGender || getCleanPhoneNumber(phoneNumber).length !== 11}
+              className={`w-full py-4 rounded-xl text-xl font-bold shadow-xl hover:opacity-90 hover:shadow-2xl hover:scale-105 transition-all mb-6 animate-led-pulse border-2 duration-800 ease-out delay-2400 ${
+                isLoaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
+              }`}
+              style={{
+                background: "linear-gradient(45deg, #25D366, #14FE00)",
+                borderColor: "#25D366",
+                boxShadow:
+                  "0 0 3px #25D366, 0 0 6px #25D366, 0 0 9px #25D366, 0 0 12px #25D366, 0 0 18px #25D366, 0 0 22px #25D366",
+                color: "white",
+              }}
             >
               EXPOR A VERDADE AGORA
             </Button>
 
-            <div className="flex items-center gap-2 p-3 rounded-lg bg-green-900/50 text-green-300 text-sm mb-6 animate-subtle-glow">
+            <div
+              className={`flex items-center gap-2 p-3 rounded-lg bg-green-900/50 text-green-300 text-sm mb-6 animate-subtle-glow transition-all duration-800 ease-out delay-2500 ${
+                isLoaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
+              }`}
+            >
               <Flame className="w-4 h-4 text-red-500 animate-subtle-glow" />
               <span className="font-semibold">
                 @{currentMessage.username} viu as conversas que tentaram esconder {pronoun}.
               </span>
             </div>
 
-            <div className="flex flex-wrap justify-center gap-4 text-sm text-whatsapp-text-light">
+            <div
+              className={`flex flex-wrap justify-center gap-4 text-sm text-whatsapp-text-light transition-all duration-800 ease-out delay-2600 ${
+                isLoaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
+              }`}
+            >
               <div className="flex items-center gap-1">
                 <Lock className="w-4 h-4" />
                 Totalmente Anônimo

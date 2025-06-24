@@ -290,6 +290,100 @@ const config = {
             boxShadow: "0 0 10px var(--tw-colors-hacking-primary), 0 0 20px rgba(0, 255, 0, 0.8)",
           },
         },
+        "led-pulse": {
+          "0%, 100%": {
+            boxShadow:
+              "0 0 3px #00ff00, 0 0 6px #00ff00, 0 0 9px #00ff00, 0 0 12px #00ff00, 0 0 18px #00ff00, 0 0 22px #00ff00",
+            backgroundColor: "#00ff00",
+            transform: "scale(1)",
+          },
+          "50%": {
+            boxShadow:
+              "0 0 1px #00ff00, 0 0 3px #00ff00, 0 0 5px #00ff00, 0 0 8px #00ff00, 0 0 12px #00ff00, 0 0 16px #00ff00",
+            backgroundColor: "#00dd00",
+            transform: "scale(0.99)",
+          },
+        },
+        "led-glow": {
+          "0%, 100%": {
+            textShadow: "0 0 5px #000000, 0 0 10px #000000, 0 0 15px #000000",
+          },
+          "50%": {
+            textShadow: "0 0 2px #000000, 0 0 5px #000000, 0 0 8px #000000",
+          },
+        },
+        "led-glow-pulse": {
+          "0%, 100%": {
+            boxShadow: "0 0 5px rgba(0, 255, 0, 0.3), 0 0 10px rgba(0, 255, 0, 0.2), 0 0 15px rgba(0, 255, 0, 0.1)",
+            transform: "scale(1)",
+          },
+          "50%": {
+            boxShadow: "0 0 8px rgba(0, 255, 0, 0.5), 0 0 16px rgba(0, 255, 0, 0.3), 0 0 24px rgba(0, 255, 0, 0.2)",
+            transform: "scale(1.005)",
+          },
+        },
+        "typing-loading": {
+          "0%": { width: "0ch" },
+          "8.33%": { width: "1ch" },
+          "16.66%": { width: "2ch" },
+          "25%": { width: "3ch" },
+          "33.33%": { width: "4ch" },
+          "41.66%": { width: "5ch" },
+          "50%": { width: "6ch" },
+          "58.33%": { width: "7ch" },
+          "66.66%": { width: "8ch" },
+          "75%": { width: "9ch" },
+          "83.33%": { width: "10ch" },
+          "91.66%": { width: "11ch" },
+          "100%": { width: "12ch" },
+        },
+        "typing-completion-message": {
+          "0%": { width: "0ch" },
+          "3%": { width: "1ch" },
+          "6%": { width: "2ch" },
+          "9%": { width: "3ch" },
+          "12%": { width: "4ch" },
+          "15%": { width: "5ch" },
+          "18%": { width: "6ch" },
+          "21%": { width: "7ch" },
+          "24%": { width: "8ch" },
+          "27%": { width: "9ch" },
+          "30%": { width: "10ch" },
+          "33%": { width: "11ch" },
+          "36%": { width: "12ch" },
+          "39%": { width: "13ch" },
+          "42%": { width: "14ch" },
+          "45%": { width: "15ch" },
+          "48%": { width: "16ch" },
+          "51%": { width: "17ch" },
+          "54%": { width: "18ch" },
+          "57%": { width: "19ch" },
+          "60%": { width: "20ch" },
+          "63%": { width: "21ch" },
+          "66%": { width: "22ch" },
+          "69%": { width: "23ch" },
+          "72%": { width: "24ch" },
+          "75%": { width: "25ch" },
+          "78%": { width: "26ch" },
+          "81%": { width: "27ch" },
+          "84%": { width: "28ch" },
+          "87%": { width: "29ch" },
+          "90%": { width: "30ch" },
+          "93%": { width: "31ch" },
+          "96%": { width: "32ch" },
+          "99%": { width: "33ch" },
+          "100%": { width: "33ch" },
+        },
+        "led-text-glow": {
+          "0%, 100%": {
+            textShadow: "0 0 5px rgba(0, 255, 0, 0.8), 0 0 10px rgba(0, 255, 0, 0.6), 0 0 15px rgba(0, 255, 0, 0.4)",
+            opacity: "0.9",
+          },
+          "50%": {
+            textShadow: "0 0 8px rgba(0, 255, 0, 1), 0 0 16px rgba(0, 255, 0, 0.8), 0 0 24px rgba(0, 255, 0, 0.6)",
+            opacity: "1",
+          },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -308,6 +402,12 @@ const config = {
         "progress-bar-fill": "progress-bar-fill linear forwards",
         "glitch-text": "glitch-text 1.5s infinite ease-in-out",
         "progress-bar-glow": "progress-bar-glow 1.5s infinite alternate", // Aplicando a nova animação
+        "led-pulse": "led-pulse 2s ease-in-out infinite",
+        "led-glow": "led-glow 2s ease-in-out infinite",
+        "led-glow-pulse": "led-glow-pulse 3s ease-in-out infinite",
+        "typing-loading": "typing-loading 4s ease-in-out infinite",
+        "typing-completion-message": "typing-completion-message 2s ease-in-out forwards",
+        "led-text-glow": "led-text-glow 3s ease-in-out infinite",
       },
       backgroundImage: {
         "gradient-main":

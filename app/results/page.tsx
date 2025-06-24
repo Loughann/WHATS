@@ -16,8 +16,31 @@ import {
 } from "lucide-react"
 import MatrixBackground from "@/components/matrix-background"
 import { Button } from "@/components/ui/button"
+import { useState, useEffect } from "react"
 
 export default function ResultsPage() {
+  const [timeRemaining, setTimeRemaining] = useState(300) // 5 minutos em segundos
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setTimeRemaining((prevTime) => {
+        if (prevTime <= 1) {
+          clearInterval(timer)
+          return 0
+        }
+        return prevTime - 1
+      })
+    }, 1000)
+
+    return () => clearInterval(timer)
+  }, [])
+
+  const formatTime = (seconds: number) => {
+    const minutes = Math.floor(seconds / 60)
+    const remainingSeconds = seconds % 60
+    return `${minutes.toString().padStart(2, "0")}:${remainingSeconds.toString().padStart(2, "0")}`
+  }
+
   return (
     <div className="min-h-screen flex flex-col items-center py-8 px-4 sm:px-6 lg:px-8 relative overflow-hidden bg-hacking-bg-dark">
       <MatrixBackground />
@@ -34,7 +57,7 @@ export default function ResultsPage() {
           <div className="absolute inset-[-3px] rounded-xl bg-gradient-neon-border animate-pulse-border z-[-1]"></div>
           <div className="relative z-10">
             <div className="flex items-center justify-center gap-3 mb-8">
-              <h3 className="text-4xl font-bold animate-glitch-text text-[rgba(0,255,0,1)] text-center">
+              <h3 className="text-4xl font-bold animate-led-text-glow text-[rgba(0,255,0,1)] text-center">
                 Relatórios de Conversas Encontradas
               </h3>
             </div>
@@ -157,7 +180,7 @@ tions Section */}
           <div className="absolute inset-[-3px] rounded-xl bg-gradient-neon-border animate-pulse-border z-[-1]"></div>
           <div className="relative z-10">
             <div className="flex items-center justify-center gap-3 mb-8">
-              <h3 className="text-4xl font-bold text-hacking-primary animate-glitch-text text-center">
+              <h3 className="text-4xl font-bold text-hacking-primary animate-led-text-glow text-center">
                 Contatos Recentes e Interações
               </h3>
             </div>
@@ -213,7 +236,7 @@ tions Section */}
           <div className="absolute inset-[-3px] rounded-xl bg-gradient-neon-border animate-pulse-border z-[-1]"></div>
           <div className="relative z-10">
             <div className="flex items-center justify-center gap-3 mb-8">
-              <h3 className="text-4xl font-bold text-hacking-primary animate-glitch-text text-center">
+              <h3 className="text-4xl font-bold text-hacking-primary animate-led-text-glow text-center">
                 Histórico de Ligações
               </h3>
             </div>
@@ -288,17 +311,23 @@ tions Section */}
 
             <div className="flex flex-col items-center gap-4">
               <p className="font-bold text-center text-hacking-primary flex items-center justify-center gap-2 text-lg md:text-xl whitespace-nowrap">
-                <Eye className="w-5 h-5 sm:w-6 sm:h-6" /> A Verdade Está a Um Clique{" "}
+                <Eye className="w-5 h-5 sm:w-6 sm:h-6" /> A verdade está a um clique{" "}
                 <Heart className="w-5 h-5 sm:w-6 sm:h-6 text-[rgba(0,255,0,1)]" />
               </p>
               <Button
                 onClick={() => window.open("https://checkoutwhats.netlify.app/", "_blank")}
-                className="w-full py-6 rounded-xl text-lg md:text-xl font-bold bg-hacking-primary shadow-xl hover:opacity-90 hover:shadow-2xl hover:scale-105 transition-all animate-intense-button-pulse text-black whitespace-nowrap px-4"
+                className="w-full py-6 rounded-xl text-lg md:text-xl font-bold shadow-xl hover:opacity-90 hover:shadow-2xl hover:scale-105 transition-all animate-led-pulse border-2 whitespace-nowrap px-4 text-neutral-900"
+                style={{
+                  background: "linear-gradient(45deg, #25D366, #14FE00)",
+                  borderColor: "#25D366",
+                  boxShadow:
+                    "0 0 3px #25D366, 0 0 6px #25D366, 0 0 9px #25D366, 0 0 12px #25D366, 0 0 18px #25D366, 0 0 22px #25D366",
+                }}
               >
                 RELATÓRIO COMPLETO POR R$14,90
               </Button>
               <p className="text-gray-400 text-sm text-center">
-                Pagamento único e 100% seguro. Acesso vitalício às informações.
+                Pagamento 100% seguro. Relatório completo válido por {formatTime(timeRemaining)} minutos
               </p>
             </div>
           </div>
