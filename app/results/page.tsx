@@ -287,18 +287,18 @@ tions Section */}
               O que você vai descobrir ao desbloquear o relatório Completo?
             </h3>
             <p className="text-center text-whatsapp-text-light mb-8 max-w-2xl mx-auto">
-              Por um pagamento único de <span className="font-bold text-[rgba(0,255,0,1)]">R$14,90</span>, você terá
+              Por um pagamento único de <span className="font-bold text-[rgba(0,255,0,1)]">R$9,90</span>, você terá
               acesso total e irrestrito a um relatório completo com todas as conversas e mídias. Chega de dúvidas.
             </p>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-12">
               {[
-                "Fotos e vídeos das conversas",
-                "Conteúdo completo das mensagens (arquivadas, antigas e atuais)",
-                "Lista de contatos e interações recentes",
-                "Início e conteúdo de conversas suspeitas",
+                "+30 Fotos e vídeos +18 nas conversas",
+                "Conteúdo completo das mensagens (arquivadas, apagadas, antigas e atuais)",
+                "Lista de contatos com número e interações recentes",
+                "Todo conteúdo de conversas suspeitas",
                 "Padrões de atividade e horários de conversa",
-                "Localizações de acesso às conversas",
+                "Localizações antigas e atuais e acesso às conversas",
               ].map((feature, i) => (
                 <div key={i} className="flex items-center gap-3 text-whatsapp-text-light">
                   <ShieldCheck
@@ -324,7 +324,7 @@ tions Section */}
                     "0 0 3px #25D366, 0 0 6px #25D366, 0 0 9px #25D366, 0 0 12px #25D366, 0 0 18px #25D366, 0 0 22px #25D366",
                 }}
               >
-                RELATÓRIO COMPLETO POR R$14,90
+                RELATÓRIO COMPLETO POR R$9,90
               </Button>
               <p className="text-gray-400 text-sm text-center">
                 Pagamento 100% seguro. Relatório completo válido por {formatTime(timeRemaining)} minutos
