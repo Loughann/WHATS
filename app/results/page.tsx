@@ -17,9 +17,95 @@ import {
 import MatrixBackground from "@/components/matrix-background"
 import { Button } from "@/components/ui/button"
 import { useState, useEffect } from "react"
+import { useSearchParams } from "next/navigation"
+
+// Lista de motéis por região/DDD
+const motelsByRegion: { [key: string]: { name: string; city: string; state: string; lat: number; lng: number } } = {
+  "11": { name: "Motel Luxor", city: "São Paulo", state: "SP", lat: -23.5505, lng: -46.6333 },
+  "12": { name: "Motel Vale do Paraíba", city: "São José dos Campos", state: "SP", lat: -23.2237, lng: -45.9009 },
+  "13": { name: "Motel Praia Grande", city: "Santos", state: "SP", lat: -23.9618, lng: -46.3322 },
+  "14": { name: "Motel Central", city: "Bauru", state: "SP", lat: -22.3208, lng: -49.0608 },
+  "15": { name: "Motel Sorocaba Palace", city: "Sorocaba", state: "SP", lat: -23.5015, lng: -47.4526 },
+  "16": { name: "Motel Ribeirão", city: "Ribeirão Preto", state: "SP", lat: -21.1704, lng: -47.8103 },
+  "17": { name: "Motel Rio Preto", city: "São José do Rio Preto", state: "SP", lat: -20.8197, lng: -49.3794 },
+  "18": { name: "Motel Oeste", city: "Presidente Prudente", state: "SP", lat: -22.1256, lng: -51.3895 },
+  "19": { name: "Motel Campinas", city: "Campinas", state: "SP", lat: -22.9099, lng: -47.0626 },
+  "21": { name: "Ouro | Motel Rio de Janeiro", city: "Rio de Janeiro", state: "RJ", lat: -22.9068, lng: -43.1729 },
+  "22": { name: "Motel Campos", city: "Campos dos Goytacazes", state: "RJ", lat: -21.7648, lng: -41.337 },
+  "24": { name: "Motel Volta Redonda", city: "Volta Redonda", state: "RJ", lat: -22.5231, lng: -44.1044 },
+  "27": { name: "Motel Vitória", city: "Vitória", state: "ES", lat: -20.3155, lng: -40.3128 },
+  "28": { name: "Motel Cachoeiro", city: "Cachoeiro de Itapemirim", state: "ES", lat: -20.8487, lng: -41.1129 },
+  "31": { name: "Motel BH Palace", city: "Belo Horizonte", state: "MG", lat: -19.9167, lng: -43.9345 },
+  "32": { name: "Motel Juiz de Fora", city: "Juiz de Fora", state: "MG", lat: -21.7587, lng: -43.3496 },
+  "33": { name: "Motel Governador Valadares", city: "Governador Valadares", state: "MG", lat: -18.8512, lng: -41.9491 },
+  "34": { name: "Motel Uberlândia", city: "Uberlândia", state: "MG", lat: -18.9113, lng: -48.2622 },
+  "35": { name: "Motel Poços de Caldas", city: "Poços de Caldas", state: "MG", lat: -21.7879, lng: -46.5619 },
+  "37": { name: "Motel Divinópolis", city: "Divinópolis", state: "MG", lat: -20.1439, lng: -44.8839 },
+  "38": { name: "Motel Montes Claros", city: "Montes Claros", state: "MG", lat: -16.7285, lng: -43.8647 },
+  "41": { name: "Motel Curitiba", city: "Curitiba", state: "PR", lat: -25.4284, lng: -49.2733 },
+  "42": { name: "Motel Ponta Grossa", city: "Ponta Grossa", state: "PR", lat: -25.0916, lng: -50.1668 },
+  "43": { name: "Motel Londrina", city: "Londrina", state: "PR", lat: -23.3045, lng: -51.1696 },
+  "44": { name: "Motel Maringá", city: "Maringá", state: "PR", lat: -23.4205, lng: -51.9331 },
+  "45": { name: "Motel Foz do Iguaçu", city: "Foz do Iguaçu", state: "PR", lat: -25.5163, lng: -54.5854 },
+  "46": { name: "Motel Francisco Beltrão", city: "Francisco Beltrão", state: "PR", lat: -26.0811, lng: -53.0544 },
+  "47": { name: "Motel Joinville", city: "Joinville", state: "SC", lat: -26.3044, lng: -48.8487 },
+  "48": { name: "Motel Florianópolis", city: "Florianópolis", state: "SC", lat: -27.5954, lng: -48.548 },
+  "49": { name: "Motel Chapecó", city: "Chapecó", state: "SC", lat: -27.1009, lng: -52.6156 },
+  "51": { name: "Motel Porto Alegre", city: "Porto Alegre", state: "RS", lat: -30.0346, lng: -51.2177 },
+  "53": { name: "Motel Pelotas", city: "Pelotas", state: "RS", lat: -31.7654, lng: -52.3376 },
+  "54": { name: "Motel Caxias do Sul", city: "Caxias do Sul", state: "RS", lat: -29.1678, lng: -51.1794 },
+  "55": { name: "Motel Santa Maria", city: "Santa Maria", state: "RS", lat: -29.6842, lng: -53.8069 },
+  "61": { name: "Motel Brasília", city: "Brasília", state: "DF", lat: -15.8267, lng: -47.9218 },
+  "62": { name: "Motel Goiânia", city: "Goiânia", state: "GO", lat: -16.6869, lng: -49.2648 },
+  "63": { name: "Motel Palmas", city: "Palmas", state: "TO", lat: -10.1689, lng: -48.3317 },
+  "64": { name: "Motel Rio Verde", city: "Rio Verde", state: "GO", lat: -17.7973, lng: -50.9249 },
+  "65": { name: "Motel Cuiabá", city: "Cuiabá", state: "MT", lat: -15.6014, lng: -56.0979 },
+  "66": { name: "Motel Rondonópolis", city: "Rondonópolis", state: "MT", lat: -16.4728, lng: -54.6354 },
+  "67": { name: "Motel Campo Grande", city: "Campo Grande", state: "MS", lat: -20.4697, lng: -54.6201 },
+  "68": { name: "Motel Rio Branco", city: "Rio Branco", state: "AC", lat: -9.9754, lng: -67.8249 },
+  "69": { name: "Motel Porto Velho", city: "Porto Velho", state: "RO", lat: -8.7612, lng: -63.9023 },
+  "71": { name: "Motel Salvador", city: "Salvador", state: "BA", lat: -12.9714, lng: -38.5014 },
+  "73": { name: "Motel Ilhéus", city: "Ilhéus", state: "BA", lat: -14.788, lng: -39.0208 },
+  "74": { name: "Motel Juazeiro", city: "Juazeiro", state: "BA", lat: -9.4111, lng: -40.4986 },
+  "75": { name: "Motel Feira de Santana", city: "Feira de Santana", state: "BA", lat: -12.2662, lng: -38.9663 },
+  "77": { name: "Motel Barreiras", city: "Barreiras", state: "BA", lat: -12.1527, lng: -44.99 },
+  "79": { name: "Motel Aracaju", city: "Aracaju", state: "SE", lat: -10.9472, lng: -37.0731 },
+  "81": { name: "Motel Recife", city: "Recife", state: "PE", lat: -8.0476, lng: -34.877 },
+  "82": { name: "Motel Maceió", city: "Maceió", state: "AL", lat: -9.6658, lng: -35.7353 },
+  "83": { name: "Motel João Pessoa", city: "João Pessoa", state: "PB", lat: -7.1195, lng: -34.845 },
+  "84": { name: "Motel Natal", city: "Natal", state: "RN", lat: -5.7945, lng: -35.211 },
+  "85": { name: "Motel Fortaleza", city: "Fortaleza", state: "CE", lat: -3.7319, lng: -38.5267 },
+  "86": { name: "Motel Teresina", city: "Teresina", state: "PI", lat: -5.0892, lng: -42.8019 },
+  "87": { name: "Motel Petrolina", city: "Petrolina", state: "PE", lat: -9.3891, lng: -40.503 },
+  "88": { name: "Motel Juazeiro do Norte", city: "Juazeiro do Norte", state: "CE", lat: -7.2304, lng: -39.3158 },
+  "89": { name: "Motel Picos", city: "Picos", state: "PI", lat: -7.0776, lng: -41.4669 },
+  "91": { name: "Motel Belém", city: "Belém", state: "PA", lat: -1.4558, lng: -48.5044 },
+  "92": { name: "Motel Manaus", city: "Manaus", state: "AM", lat: -3.119, lng: -60.0217 },
+  "93": { name: "Motel Santarém", city: "Santarém", state: "PA", lat: -2.4093, lng: -54.7081 },
+  "94": { name: "Motel Marabá", city: "Marabá", state: "PA", lat: -5.3687, lng: -49.1178 },
+  "95": { name: "Motel Boa Vista", city: "Boa Vista", state: "RR", lat: 2.8235, lng: -60.6758 },
+  "96": { name: "Motel Macapá", city: "Macapá", state: "AP", lat: 0.0389, lng: -51.0664 },
+  "97": { name: "Motel Coari", city: "Coari", state: "AM", lat: -4.0853, lng: -63.1441 },
+  "98": { name: "Motel São Luís", city: "São Luís", state: "MA", lat: -2.5387, lng: -44.2825 },
+  "99": { name: "Motel Imperatriz", city: "Imperatriz", state: "MA", lat: -5.5242, lng: -47.4821 },
+}
 
 export default function ResultsPage() {
   const [timeRemaining, setTimeRemaining] = useState(300) // 5 minutos em segundos
+  const [userLocation, setUserLocation] = useState<string>("Carregando localização...")
+  const [nearestMotel, setNearestMotel] = useState<{
+    name: string
+    city: string
+    state: string
+    lat: number
+    lng: number
+  } | null>(null)
+  const searchParams = useSearchParams()
+  const phoneNumber = searchParams.get("phone") || "(XX) XXXXX-XXXX"
+
+  // Extrair DDD do número de telefone
+  const cleanPhoneNumber = phoneNumber.replace(/\D/g, "")
+  const ddd = cleanPhoneNumber.slice(0, 2)
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -34,6 +120,71 @@ export default function ResultsPage() {
 
     return () => clearInterval(timer)
   }, [])
+
+  // Capturar localização do usuário
+  useEffect(() => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        async (position) => {
+          try {
+            // Usar reverse geocoding para obter a cidade
+            const response = await fetch(
+              `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${position.coords.latitude}&longitude=${position.coords.longitude}&localityLanguage=pt`,
+            )
+            const data = await response.json()
+            const city = data.city || data.locality || "Localização detectada"
+            const state = data.principalSubdivision || ""
+
+            setUserLocation(`${city}${state ? `, ${state}` : ""}`)
+
+            // Determinar o motel mais próximo baseado no DDD ou localização
+            const motel = motelsByRegion[ddd] || {
+              name: "Motel Luxo Premium",
+              city: city,
+              state: state,
+              lat: position.coords.latitude,
+              lng: position.coords.longitude,
+            }
+            setNearestMotel(motel)
+          } catch (error) {
+            // Fallback para DDD se a API falhar
+            const motel = motelsByRegion[ddd] || {
+              name: "Motel Luxo Premium",
+              city: "Sua região",
+              state: "",
+              lat: -23.5505,
+              lng: -46.6333,
+            }
+            setUserLocation("Localização detectada")
+            setNearestMotel(motel)
+          }
+        },
+        (error) => {
+          // Fallback para DDD se geolocalização falhar
+          const motel = motelsByRegion[ddd] || {
+            name: "Motel Luxo Premium",
+            city: "Sua região",
+            state: "",
+            lat: -23.5505,
+            lng: -46.6333,
+          }
+          setUserLocation("Localização detectada")
+          setNearestMotel(motel)
+        },
+      )
+    } else {
+      // Fallback para DDD se geolocalização não estiver disponível
+      const motel = motelsByRegion[ddd] || {
+        name: "Motel Luxo Premium",
+        city: "Sua região",
+        state: "",
+        lat: -23.5505,
+        lng: -46.6333,
+      }
+      setUserLocation("Localização detectada")
+      setNearestMotel(motel)
+    }
+  }, [ddd])
 
   const formatTime = (seconds: number) => {
     const minutes = Math.floor(seconds / 60)
@@ -107,8 +258,8 @@ export default function ResultsPage() {
                 </div>
               </div>
               <p className="text-center text-gray-300 text-sm mt-4">
-                <Lock className="inline-block w-4 h-4 mr-1" /> Mais 5 trechos de conversas e 2 mídias foram encontrados
-                e estão bloqueados.
+                <Lock className="inline-block w-4 h-4 mr-1" /> Mais de 15 trechos de conversas e 37 mídias foram
+                encontrados e estão bloqueados.
               </p>
             </div>
 
@@ -279,6 +430,87 @@ tions Section */}
           </div>
         </div>
 
+        {/* Suspicious Keywords Section */}
+        <div className="relative w-full p-8 rounded-xl bg-hacking-card-bg overflow-hidden border border-transparent animate-glow-pulse">
+          <div className="absolute inset-[-3px] rounded-xl bg-gradient-neon-border animate-pulse-border z-[-1]"></div>
+          <div className="relative z-10">
+            <div className="flex items-center justify-center gap-3 mb-8">
+              <h3 className="text-4xl font-bold text-hacking-primary animate-led-text-glow text-center">
+                Palavras-chave Suspeitas
+              </h3>
+            </div>
+
+            <p className="text-whatsapp-text-light mb-6">
+              O sistema escaneou <span className="text-red-400 font-bold">4.327 mensagens</span> e identificou várias
+              palavras-chave que podem indicar comportamento suspeito.
+            </p>
+
+            <div className="space-y-4 mb-8">
+              {[
+                { word: "Gostosa", count: 13 },
+                { word: "Amor", count: 9 },
+                { word: "Segredo", count: 8 },
+                { word: "Escondido", count: 6 },
+                { word: "Não conta", count: 5 },
+              ].map((item, index) => (
+                <div key={index} className="flex items-center justify-between p-3 rounded-lg bg-gray-800/50">
+                  <span className="text-whatsapp-text-light font-medium">"{item.word}"</span>
+                  <div className="w-8 h-8 rounded-full bg-green-500 flex items-center justify-center">
+                    <span className="text-white font-bold text-sm">{item.count}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Suspicious Location Section */}
+        <div className="relative w-full p-8 rounded-xl bg-hacking-card-bg overflow-hidden border border-transparent animate-glow-pulse">
+          <div className="absolute inset-[-3px] rounded-xl bg-gradient-neon-border animate-pulse-border z-[-1]"></div>
+          <div className="relative z-10">
+            <div className="flex items-center justify-center gap-3 mb-8">
+              <h3 className="text-4xl font-bold text-hacking-primary animate-led-text-glow text-center">
+                Localização Suspeita
+              </h3>
+            </div>
+
+            <p className="text-whatsapp-text-light mb-6">
+              O número <span className="font-bold text-hacking-primary">{phoneNumber}</span> esteve neste motel nos
+              últimos <span className="text-red-400 font-bold">7 dias</span>. Abaixo está a localização mais recente
+              registrada.
+            </p>
+
+            <div className="relative mb-6 rounded-lg overflow-hidden bg-gray-800 border border-hacking-primary/30">
+              {nearestMotel && (
+                <iframe
+                  src={`https://www.google.com/maps/embed/v1/place?key=AIzaSyAW616dsHMKfzenwtYWtTAd99ekhk41Prw&q=${encodeURIComponent(
+                    `${nearestMotel.name} ${nearestMotel.city} ${nearestMotel.state}`,
+                  )}&center=${nearestMotel.lat},${nearestMotel.lng}&zoom=15&maptype=roadmap`}
+                  width="100%"
+                  height="400"
+                  style={{ border: 0 }}
+                  allowFullScreen
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                  className="w-full h-96 rounded-lg"
+                />
+              )}
+              {!nearestMotel && (
+                <div className="w-full h-96 bg-gradient-to-br from-blue-200 to-blue-300 flex items-center justify-center rounded-lg">
+                  <div className="text-center">
+                    <div className="w-8 h-8 bg-red-500 rounded-full mx-auto mb-2 flex items-center justify-center shadow-lg">
+                      <MapPin className="w-4 h-4 text-white" />
+                    </div>
+                    <div className="bg-white px-3 py-2 rounded-lg shadow-lg">
+                      <p className="font-bold text-gray-800 text-sm">Carregando localização...</p>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+
         {/* Unlock Section */}
         <div className="relative w-full p-8 rounded-xl bg-hacking-card-bg overflow-hidden border border-transparent animate-glow-pulse">
           <div className="absolute inset-[-3px] rounded-xl bg-gradient-neon-border animate-pulse-border z-[-1]"></div>
@@ -297,7 +529,7 @@ tions Section */}
                 "Conteúdo completo das mensagens (arquivadas, apagadas, antigas e atuais)",
                 "Lista de contatos com número e interações recentes",
                 "Todo conteúdo de conversas suspeitas",
-                "Padrões de atividade e horários de conversa",
+                "Padrões de atividades e horários de conversa",
                 "Localizações antigas e atuais e acesso às conversas",
               ].map((feature, i) => (
                 <div key={i} className="flex items-center gap-3 text-whatsapp-text-light">
