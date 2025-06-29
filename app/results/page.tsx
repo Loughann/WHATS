@@ -119,22 +119,31 @@ function generateAddress(motel: { name: string; city: string; state: string; lat
     "Motel Recife": "Av. Boa Viagem, 654 - Boa Viagem, Recife - PE, 51021-000",
     "Motel Brasília": "Esplanada dos Ministérios - Brasília, DF, 70040-010",
     "Motel Manaus": "Av. Eduardo Ribeiro, 987 - Centro, Manaus - AM, 69010-001",
+    "Motel Teresina": "Av. Beira Mar, 195 - Centro, Teresina - PI, 79593-457",
+    "Motel Belém": "Av. Presidente Vargas, 645 - Campina, Belém - PA, 66017-000",
+    "Motel Goiânia": "Av. Anhanguera, 1234 - Setor Central, Goiânia - GO, 74015-100",
+    "Motel Cuiabá": "Av. Getúlio Vargas, 567 - Centro Norte, Cuiabá - MT, 78005-370",
+    "Motel Campo Grande": "Av. Afonso Pena, 890 - Centro, Campo Grande - MS, 79002-070",
   }
 
-  // Se existe endereço específico, usar ele, senão gerar um genérico
+  // Se existe endereço específico, usar ele
   if (specificAddresses[motel.name]) {
     return specificAddresses[motel.name]
   }
 
-  // Fallback para endereço genérico
-  const streets = ["R. das Flores", "Av. Principal", "R. Central", "Av. Beira Mar", "R. do Comércio"]
-  const randomStreet = streets[Math.floor(Math.random() * streets.length)]
-  const randomNumber = Math.floor(Math.random() * 999) + 100
-  const neighborhoods = ["Centro", "Vila Nova", "Jardim América", "Bela Vista"]
-  const randomNeighborhood = neighborhoods[Math.floor(Math.random() * neighborhoods.length)]
-  const randomCEP = `${Math.floor(Math.random() * 90000) + 10000}-${Math.floor(Math.random() * 900) + 100}`
+  // Fallback para endereço consistente baseado no hash do nome do motel
+  const seed = motel.name.split("").reduce((acc, char) => acc + char.charCodeAt(0), 0)
 
-  return `${randomStreet}, ${randomNumber} - ${randomNeighborhood}, ${motel.city} - ${motel.state}, ${randomCEP}`
+  const streets = ["R. das Flores", "Av. Principal", "R. Central", "Av. Beira Mar", "R. do Comércio"]
+  const neighborhoods = ["Centro", "Vila Nova", "Jardim América", "Bela Vista"]
+
+  const streetIndex = seed % streets.length
+  const neighborhoodIndex = (seed + 1) % neighborhoods.length
+  const number = 100 + (seed % 899) // Entre 100 e 999
+  const cepBase = 10000 + (seed % 89999) // Entre 10000 e 99999
+  const cepSuffix = 100 + (seed % 899) // Entre 100 e 999
+
+  return `${streets[streetIndex]}, ${number} - ${neighborhoods[neighborhoodIndex]}, ${motel.city} - ${motel.state}, ${cepBase.toString().padStart(5, "0")}-${cepSuffix.toString().padStart(3, "0")}`
 }
 
 // Função para gerar avaliação consistente baseada no nome do motel
@@ -191,6 +200,19 @@ export default function ResultsPage() {
 
   // Determinar o motel mais próximo com base na localização do usuário
   useEffect(() => {
+    // Função para selecionar motel por DDD
+    const selectMotelByDDD = () => {
+      const ddd = extractDDD(phoneNumber)
+      if (ddd && motelsByRegion[ddd]) {
+        setNearestMotel(motelsByRegion[ddd])
+      } else {
+        // Se não encontrar DDD, usar um motel fixo baseado no hash do número
+        const phoneHash = phoneNumber.split("").reduce((acc, char) => acc + char.charCodeAt(0), 0)
+        const motelIndex = phoneHash % allMotels.length
+        setNearestMotel(allMotels[motelIndex] || allMotels[0])
+      }
+    }
+
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
@@ -208,54 +230,22 @@ export default function ResultsPage() {
             }
           })
 
-          setNearestMotel(closestMotel)
+          if (closestMotel) {
+            setNearestMotel(closestMotel)
+          }
         },
         (error) => {
           console.error("Erro ao obter localização:", error)
           // Fallback: usar DDD do número de telefone
-          const ddd = extractDDD(phoneNumber)
-          if (ddd && motelsByRegion[ddd]) {
-            setNearestMotel(motelsByRegion[ddd])
-          } else {
-            // Se não encontrar DDD, usar um motel aleatório
-            if (allMotels.length > 0) {
-              const randomIndex = Math.floor(Math.random() * allMotels.length)
-              setNearestMotel(allMotels[randomIndex])
-            } else {
-              setNearestMotel({
-                name: "Motel Desconhecido",
-                city: "Cidade Desconhecida",
-                state: "Estado Desconhecida",
-                lat: -23.5505,
-                lng: -46.6333,
-              })
-            }
-          }
+          selectMotelByDDD()
         },
       )
     } else {
       console.warn("Geolocalização não suportada pelo navegador.")
       // Fallback: usar DDD do número de telefone
-      const ddd = extractDDD(phoneNumber)
-      if (ddd && motelsByRegion[ddd]) {
-        setNearestMotel(motelsByRegion[ddd])
-      } else {
-        // Se não encontrar DDD, usar um motel aleatório
-        if (allMotels.length > 0) {
-          const randomIndex = Math.floor(Math.random() * allMotels.length)
-          setNearestMotel(allMotels[randomIndex])
-        } else {
-          setNearestMotel({
-            name: "Motel Desconhecido",
-            city: "Cidade Desconhecida",
-            state: "Estado Desconhecida",
-            lat: -23.5505,
-            lng: -46.6333,
-          })
-        }
-      }
+      selectMotelByDDD()
     }
-  }, [allMotels, phoneNumber]) // Adicionado phoneNumber como dependência
+  }, []) // Dependências vazias para executar apenas uma vez
 
   const formatTime = (seconds: number) => {
     const minutes = Math.floor(seconds / 60)
