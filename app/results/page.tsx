@@ -439,6 +439,20 @@ export default function ResultsPage() {
               <Lock className="inline-block w-4 h-4 mr-1" /> O relatório completo revela nomes, fotos sem blur e o
               conteúdo das conversas.
             </p>
+            <div className="text-center mt-8">
+              <Button
+                onClick={() => window.open("https://checkoutwhats.netlify.app/", "_blank")}
+                className="w-full sm:w-auto py-4 px-6 sm:px-8 rounded-xl text-base sm:text-lg font-bold shadow-xl hover:opacity-90 hover:shadow-2xl hover:scale-105 transition-all animate-led-pulse border-2 text-neutral-900"
+                style={{
+                  background: "linear-gradient(45deg, #25D366, #14FE00)",
+                  borderColor: "#25D366",
+                  boxShadow:
+                    "0 0 3px #25D366, 0 0 6px #25D366, 0 0 9px #25D366, 0 0 12px #25D366, 0 0 18px #25D366, 0 0 22px #25D366",
+                }}
+              >
+                TODAS CONVERSAS E FOTOS POR R$9,90 🔥
+              </Button>
+            </div>
           </div>
         </div>
 
@@ -521,6 +535,10 @@ export default function ResultsPage() {
                 </div>
               ))}
             </div>
+            <p className="text-center text-gray-300 text-sm mt-4">
+              <Lock className="inline-block w-4 h-4 mr-1" /> Desbloqueie as conversas privadas e descubra pra quem ele
+              está enviando mensagens suspeitas
+            </p>
           </div>
         </div>
 
@@ -691,6 +709,83 @@ export default function ResultsPage() {
               </Button>
               <p className="text-gray-400 text-sm text-center">
                 Pagamento 100% seguro. Relatório completo válido por {formatTime(timeRemaining)} minutos
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Video Testimonial Section */}
+        <div className="relative w-full p-4 sm:p-8 rounded-xl bg-hacking-card-bg overflow-hidden border border-transparent animate-glow-pulse">
+          <div className="absolute inset-[-3px] rounded-xl bg-gradient-neon-border animate-pulse-border z-[-1]"></div>
+          <div className="relative z-10">
+            <h3 className="text-2xl sm:text-3xl font-bold text-center text-hacking-primary mb-6 sm:mb-8 animate-led-text-glow">
+              Veja o que nossos usuários estão dizendo
+            </h3>
+            <p className="text-center text-whatsapp-text-light mb-6 sm:mb-8 max-w-2xl mx-auto text-sm sm:text-base">
+              Depoimentos reais de pessoas que descobriram a verdade usando o WhatsEspião
+            </p>
+
+            {/* First Video */}
+            <div className="relative bg-gray-900 rounded-lg overflow-hidden border border-hacking-primary/30 w-full mx-auto mb-6 sm:mb-8 -mx-4 sm:mx-0">
+              <div className="w-full h-[70vh] sm:h-[80vh]">
+                <iframe
+                  src="https://player.vimeo.com/video/1097295094?h=3cec6d984d&badge=0&autopause=0&player_id=0&app_id=58479&title=0&byline=0&portrait=0"
+                  width="100%"
+                  height="100%"
+                  frameBorder="0"
+                  allow="autoplay; fullscreen; picture-in-picture; clipboard-write"
+                  title="Bianca - Whats Espião Depoimento"
+                  className="w-full h-full object-cover"
+                ></iframe>
+              </div>
+            </div>
+
+            {/* Second Video */}
+            <div className="relative bg-gray-900 rounded-lg overflow-hidden border border-hacking-primary/30 w-full mx-auto mb-6 sm:mb-8 -mx-4 sm:mx-0">
+              <div className="w-full h-[70vh] sm:h-[80vh]">
+                <iframe
+                  src="https://player.vimeo.com/video/1097295099?h=d4cbac1d09&badge=0&autopause=0&player_id=0&app_id=58479&title=0&byline=0&portrait=0"
+                  width="100%"
+                  height="100%"
+                  frameBorder="0"
+                  allow="autoplay; fullscreen; picture-in-picture; clipboard-write"
+                  title="Depoimento WhatsEspião 2"
+                  className="w-full h-full object-cover"
+                ></iframe>
+              </div>
+            </div>
+
+            {/* Third Video */}
+            <div className="relative bg-gray-900 rounded-lg overflow-hidden border border-hacking-primary/30 w-full mx-auto mb-6 sm:mb-8 -mx-4 sm:mx-0">
+              <div className="w-full h-[70vh] sm:h-[80vh]">
+                <iframe
+                  src="https://player.vimeo.com/video/1097295195?h=10b2051a25&badge=0&autopause=0&player_id=0&app_id=58479&title=0&byline=0&portrait=0"
+                  width="100%"
+                  height="100%"
+                  frameBorder="0"
+                  allow="autoplay; fullscreen; picture-in-picture; clipboard-write"
+                  title="Depoimento WhatsEspião 3"
+                  className="w-full h-full object-cover"
+                ></iframe>
+              </div>
+            </div>
+
+            <div className="text-center">
+              <Button
+                onClick={() => window.open("https://checkoutwhats.netlify.app/", "_blank")}
+                className="w-full sm:w-auto py-4 px-6 sm:px-8 rounded-xl text-base sm:text-lg font-bold shadow-xl hover:opacity-90 hover:shadow-2xl hover:scale-105 transition-all animate-led-pulse border-2 text-neutral-900 mb-4"
+                style={{
+                  background: "linear-gradient(45deg, #25D366, #14FE00)",
+                  borderColor: "#25D366",
+                  boxShadow:
+                    "0 0 3px #25D366, 0 0 6px #25D366, 0 0 9px #25D366, 0 0 12px #25D366, 0 0 18px #25D366, 0 0 22px #25D366",
+                }}
+              >
+                QUERO DESCOBRIR A VERDADE AGORA 👀
+              </Button>
+              <p className="text-gray-400 text-xs sm:text-sm">
+                <Lock className="inline-block w-3 h-3 sm:w-4 sm:h-4 mr-1" />
+                Mais de 50.000 pessoas já descobriram a verdade
               </p>
             </div>
           </div>
