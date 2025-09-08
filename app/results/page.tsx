@@ -449,7 +449,7 @@ export default function ResultsPage() {
                     "0 0 3px #25D366, 0 0 6px #25D366, 0 0 9px #25D366, 0 0 12px #25D366, 0 0 18px #25D366, 0 0 22px #25D366",
                 }}
               >
-                ACESSO COMPLETO POR R$14,90
+                DESCOBRIR TUDO AGORA
               </Button>
             </div>
           </div>
@@ -765,7 +765,7 @@ export default function ResultsPage() {
                     "0 0 3px #25D366, 0 0 6px #25D366, 0 0 9px #25D366, 0 0 12px #25D366, 0 0 18px #25D366, 0 0 22px #25D366",
                 }}
               >
-                DESBLOQUEAR AGORA TUDO POR R$14,90
+                DESCOBRIR A VERDADE COMPLETA AGORA
               </Button>
               <p className="text-gray-400 text-xs sm:text-sm">
                 <Lock className="inline-block w-3 h-3 sm:w-4 sm:h-4 mr-1" />
